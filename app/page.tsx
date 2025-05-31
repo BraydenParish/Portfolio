@@ -49,15 +49,15 @@ export default function Portfolio() {
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <Button variant="outline" className="border-green-400 text-green-400 hover:bg-green-400 hover:text-black">
+            <Button variant="outline" className="bg-green-400 text-black hover:bg-green-400 hover:text-black">
               <Mail className="w-4 h-4 mr-2" />
               Contact Me
             </Button>
-            <Button variant="outline" className="border-green-400 text-green-400 hover:bg-green-400 hover:text-black">
+            <Button variant="outline" className="bg-green-400 text-black hover:bg-green-400 hover:text-black">
               <Github className="w-4 h-4 mr-2" />
               GitHub
             </Button>
-            <Button variant="outline" className="border-green-400 text-green-400 hover:bg-green-400 hover:text-black">
+            <Button variant="outline" className="bg-green-400 text-black hover:bg-green-400 hover:text-black">
               <Linkedin className="w-4 h-4 mr-2" />
               LinkedIn
             </Button>
