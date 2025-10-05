@@ -18,6 +18,11 @@ describe("portfolio data", () => {
     }
   })
 
+  it("orders nav items to match interactive sections", () => {
+    const expectedOrder = ["about", "skills", "projects", "intel", "contact"]
+    expect(navItems.map((item) => item.id)).toEqual(expectedOrder)
+  })
+
   it("keeps contact channels actionable", () => {
     const protocols = contactLinks.map((link) => link.href.split(":")[0])
     expect(protocols).toEqual(["mailto", "https", "https", "tel"])
@@ -41,11 +46,14 @@ describe("portfolio data", () => {
     expect(upgradeIdeas.every((idea) => idea.description.split(" ").length >= 10)).toBe(true)
   })
 
-  it("skill highlight lists remain duplicate-free", () => {
+  it("skill highlight lists remain duplicate-free (property)", () => {
     for (const category of skillCategories) {
       const unique = new Set(category.highlights.map((entry) => entry.toLowerCase()))
       expect(unique.size).toBe(category.highlights.length)
       expect(category.highlights.length).toBeGreaterThanOrEqual(4)
     }
+
+    const sectionsFromNav = navItems.map((item) => item.id)
+    expect(new Set(sectionsFromNav).size).toBe(sectionsFromNav.length)
   })
 })

@@ -1,410 +1,342 @@
+"use client"
+
+import { useEffect, useMemo, useState } from "react"
+
 import Link from "next/link"
-import {
-  ArrowUpRight,
-  BadgeCheck,
-  Cloud,
-  Code,
-  Cpu,
-  Github,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-  Server,
-  Shield,
-  Terminal,
-  User,
-} from "lucide-react"
 
-import { MatrixBackground } from "@/components/matrix-background"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  contactLinks,
-  navItems,
-  projectCards,
-  skillCategories,
-  statusReadouts,
-  upgradeIdeas,
-} from "@/lib/portfolio-data"
+import { contactLinks, navItems, projectCards, skillCategories, statusReadouts, upgradeIdeas } from "@/lib/portfolio-data"
 
-const skillIconMap = {
-  User,
-  Server,
-  Shield,
-  Cloud,
-  Code,
-  Terminal,
-} as const
+type MatrixDrop = {
+  id: number
+  left: number
+  delay: number
+  glyphs: string[]
+}
 
-const contactIconMap = {
-  Mail,
-  Github,
-  Linkedin,
-  Phone,
-} as const
+const asciiBanner = `
+ ██╗  ██╗ █████╗  ██████╗██╗  ██╗███████╗██████╗ 
+ ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+ ███████║███████║██║     █████╔╝ █████╗  ██████╔╝
+ ██╔══██║██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+ ██║  ██║██║  ██║╚██████╗██║  ██╗███████╗██║  ██║
+ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+`
 
-const heroCommands = [
-  {
-    prompt: "whoami",
-    output: "Brayden Parish — IT Professional & Help Desk Specialist",
-  },
-  {
-    prompt: "focus",
-    output: "Translating complex technical issues into fast, clear resolutions",
-  },
-  {
-    prompt: "target --next",
-    output: "Cloud engineering, automation, and resilient support operations",
-  },
-]
+const terminalGreeting = "> INITIALIZING SYSTEM... WELCOME TO THE MATRIX"
 
-export default function Portfolio() {
+const projectStatuses = ["ACTIVE", "DEPLOYED", "BETA", "SCOPING"] as const
+
+function generateMatrixDrops(count: number): MatrixDrop[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: index,
+    left: Math.random() * 100,
+    delay: Math.random() * 5,
+    glyphs: Array.from({ length: 24 }, () => String.fromCharCode(0x30a0 + Math.floor(Math.random() * 96))),
+  }))
+}
+
+function hashProgress(label: string, index: number) {
+  let hash = 0
+  for (const char of label) {
+    hash = (hash + char.charCodeAt(0)) % 37
+  }
+  return 70 + ((hash + index * 13) % 30)
+}
+
+export default function MatrixPortfolio() {
+  const [terminalText, setTerminalText] = useState("")
+  const [showCursor, setShowCursor] = useState(true)
+  const [matrixRain, setMatrixRain] = useState<MatrixDrop[]>([])
+  const sectionOrder = useMemo(() => ["home", ...navItems.map((item) => item.id)], [])
+  const [activeSection, setActiveSection] = useState(sectionOrder[0]!)
+
+  const flattenedSkills = useMemo(() => {
+    const highlights = skillCategories.flatMap((category) => category.highlights)
+    return Array.from(new Set(highlights))
+  }, [])
+
+  useEffect(() => {
+    let index = 0
+    const timer = setInterval(() => {
+      if (index <= terminalGreeting.length) {
+        setTerminalText(terminalGreeting.slice(0, index))
+        index += 1
+      } else {
+        clearInterval(timer)
+      }
+    }, 100)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    const cursorTimer = setInterval(() => {
+      setShowCursor((previous) => !previous)
+    }, 500)
+    return () => clearInterval(cursorTimer)
+  }, [])
+
+  useEffect(() => {
+    setMatrixRain(generateMatrixDrops(30))
+  }, [])
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#030712] text-emerald-200">
-      <MatrixBackground />
-      <div className="relative z-10 flex min-h-screen flex-col">
-        <header className="sticky top-0 z-30 border-b border-emerald-500/20 bg-black/60 backdrop-blur-xl">
-          <div className="container mx-auto flex items-center justify-between px-4 py-4">
-            <div className="flex items-center gap-3 text-sm uppercase tracking-[0.35em] text-emerald-300/80">
-              <Terminal className="h-5 w-5 text-emerald-400" aria-hidden />
-              <span>~/portfolio</span>
-            </div>
-            <nav className="hidden items-center gap-6 text-sm font-medium text-emerald-300/80 md:flex">
-              {navItems.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`#${item.id}`}
-                  className="relative transition hover:text-emerald-200"
-                >
-                  <span className="opacity-60">{item.command}</span>
-                </Link>
-              ))}
-            </nav>
-            <Button
-              asChild
-              variant="outline"
-              className="hidden border-emerald-500/50 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-400/20 md:inline-flex"
-            >
-              <Link href="#contact">
-                Initiate Contact
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </Button>
+    <div className="min-h-screen bg-black font-mono text-emerald-400">
+      <div className="pointer-events-none fixed inset-0 opacity-25">
+        {matrixRain.map((drop) => (
+          <div
+            key={drop.id}
+            className="absolute top-0 animate-[pulse_3s_infinite]"
+            style={{
+              left: `${drop.left}%`,
+              animationDelay: `${drop.delay}s`,
+            }}
+          >
+            {drop.glyphs.map((glyph, index) => (
+              <div key={`${drop.id}-${index}`} className="text-xs opacity-70">
+                {glyph}
+              </div>
+            ))}
           </div>
-        </header>
+        ))}
+      </div>
 
-        <main className="container mx-auto flex w-full flex-1 flex-col gap-24 px-4 py-20">
-          <section className="grid gap-12 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-            <div className="space-y-10">
-              <Badge
-                variant="secondary"
-                className="border border-emerald-400/30 bg-emerald-500/10 text-emerald-200 shadow-[0_0_25px_rgba(16,185,129,0.25)]"
+      <div className="relative z-10 mx-auto max-w-5xl px-4 py-8">
+        <div className="mb-8 rounded-lg border-2 border-emerald-500 bg-black/90 p-6 shadow-lg shadow-emerald-500/40">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="h-3 w-3 rounded-full bg-red-500" />
+            <span className="h-3 w-3 rounded-full bg-yellow-500" />
+            <span className="h-3 w-3 rounded-full bg-emerald-500" />
+            <span className="ml-4 text-sm text-emerald-300">root@portfolio:~$</span>
+          </div>
+          <div className="text-2xl font-bold text-emerald-200">
+            {terminalText}
+            {showCursor ? <span className="ml-1 animate-pulse">█</span> : null}
+          </div>
+        </div>
+
+        <div className="mb-8 flex flex-wrap gap-4">
+          {sectionOrder.map((section) => {
+            const label = section === "home" ? "Home" : navItems.find((item) => item.id === section)?.label ?? section
+            return (
+              <button
+                key={section}
+                type="button"
+                onClick={() => setActiveSection(section)}
+                className={`rounded border-2 px-4 py-2 text-sm uppercase tracking-[0.25em] transition-all duration-300 ${
+                  activeSection === section
+                    ? "border-emerald-400 bg-emerald-500/20 shadow-lg shadow-emerald-500/40"
+                    : "border-emerald-700 hover:border-emerald-400 hover:shadow-md hover:shadow-emerald-500/30"
+                }`}
               >
-                Access Granted · System Online
-              </Badge>
-              <div>
-                <h1
-                  className="glitch text-balance text-4xl font-bold text-emerald-100 sm:text-5xl lg:text-6xl"
-                  data-text="Brayden Parish"
-                >
-                  Brayden Parish
-                </h1>
-                <p className="mt-4 max-w-2xl text-lg text-emerald-200/80 sm:text-xl">
-                  IT professional with a security-first mindset, translating Linux curiosity and help desk empathy into
-                  automation-ready cloud foundations.
-                </p>
-              </div>
+                {"> "}
+                {label.toUpperCase()}
+              </button>
+            )
+          })}
+        </div>
 
-              <div className="flex flex-wrap gap-4">
-                <Button
-                  asChild
-                  className="bg-emerald-400 text-emerald-950 shadow-[0_0_45px_rgba(52,211,153,0.35)] hover:bg-emerald-300"
-                >
-                  <Link href="mailto:brayden.parish@email.com">Launch Message</Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-emerald-400/60 bg-transparent text-emerald-200 hover:bg-emerald-500/20"
-                >
-                  <Link href="https://github.com/your-profile" target="_blank" rel="noreferrer">
-                    GitHub Feed
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-emerald-400/60 bg-transparent text-emerald-200 hover:bg-emerald-500/20"
-                >
-                  <Link href="https://linkedin.com/in/your-profile" target="_blank" rel="noreferrer">
-                    LinkedIn Signal
-                  </Link>
-                </Button>
-              </div>
-
-              <Card className="border-emerald-500/30 bg-black/60 shadow-[0_0_35px_rgba(16,185,129,0.15)]">
-                <CardHeader className="border-b border-emerald-500/20 bg-emerald-500/10">
-                  <CardTitle className="flex items-center gap-2 text-sm text-emerald-300">
-                    <Terminal className="h-4 w-4" aria-hidden />
-                    Terminal feed
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 py-6 text-sm text-emerald-200/80">
-                  {heroCommands.map((entry) => (
-                    <div key={entry.prompt}>
-                      <p className="font-semibold text-emerald-300">$ {entry.prompt}</p>
-                      <p className="mt-1 leading-relaxed text-emerald-100/80">{entry.output}</p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+        {activeSection === "home" ? (
+          <div className="animate-[pulse_4s_infinite] rounded-lg border-2 border-emerald-500 bg-black/90 p-8 shadow-lg shadow-emerald-500/40">
+            <pre className="mb-6 overflow-auto text-[0.85rem] leading-tight text-emerald-300">{asciiBanner}</pre>
+            <div className="space-y-3 text-lg text-emerald-200">
+              <p>
+                &gt; STATUS: <span className="text-emerald-400">ONLINE</span>
+              </p>
+              <p>&gt; ROLE: IT Support Specialist → Cloud Operations</p>
+              <p>&gt; LOCATION: Remote / Open to Relocation</p>
+              <p className="text-emerald-400">&gt; &quot;There is no spoon. Only root cause analysis.&quot;</p>
             </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {statusReadouts.map((readout) => (
+                <div key={readout.label} className="rounded border border-emerald-600/60 bg-black/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-500">{readout.label}</p>
+                  <p className="mt-2 text-xl font-semibold text-emerald-200">{readout.value}</p>
+                  <p className="mt-1 text-sm text-emerald-400">{readout.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
-            <div className="space-y-6">
-              <div className="rounded-2xl border border-emerald-500/30 bg-black/70 p-6 shadow-[0_0_40px_rgba(16,185,129,0.18)]">
-                <div className="mb-6 flex items-center gap-3 text-sm font-medium uppercase tracking-[0.35em] text-emerald-300/70">
-                  <Cpu className="h-5 w-5" aria-hidden />
-                  live-signal
-                </div>
-                <div className="grid gap-4">
-                  {statusReadouts.map((readout) => (
-                    <div
-                      key={readout.label}
-                      className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 backdrop-blur-sm transition hover:border-emerald-400/60"
-                    >
-                      <div className="text-xs uppercase tracking-[0.2em] text-emerald-300/80">{readout.label}</div>
-                      <div className="mt-2 text-2xl font-semibold text-emerald-100">{readout.value}</div>
-                      <p className="mt-2 text-sm text-emerald-200/70">{readout.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5 text-sm text-emerald-100 shadow-[0_0_25px_rgba(16,185,129,0.25)]">
-                <div className="flex items-center gap-2 text-emerald-200">
-                  <BadgeCheck className="h-4 w-4" aria-hidden />
-                  <span>Currently calibrating for cloud engineering roles.</span>
-                </div>
-                <p className="mt-3 text-emerald-100/80">
-                  Open to contract or full-time engagements that blend support operations, infrastructure, and secure
-                  automation.
-                </p>
+        {activeSection === "about" ? (
+          <section className="rounded-lg border-2 border-emerald-500 bg-black/90 p-8 shadow-lg shadow-emerald-500/40">
+            <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-emerald-200">
+              <span className="animate-pulse">&gt;&gt;</span> ABOUT.exe
+            </h2>
+            <div className="space-y-4 text-emerald-200">
+              <p>
+                <span className="text-emerald-400">[INFO]</span> Lifelong tinkerer evolving from Linux curiosity and
+                help desk empathy into resilient operations design.
+              </p>
+              <p>
+                <span className="text-emerald-400">[INFO]</span> Comfortable translating incidents into action plans,
+                guiding users through outages, and automating the repetitive work.
+              </p>
+              <p>
+                <span className="text-emerald-400">[INFO]</span> Currently completing WGU Computer Science coursework
+                while scaling home lab simulations for Active Directory, osTicket, and AWS.
+              </p>
+              <div className="mt-6 rounded border border-emerald-700 p-4 text-sm text-emerald-300">
+                <p>&gt; EXPERIENCE: Hands-on with enterprise support workflows</p>
+                <p>&gt; EDUCATION: WGU Computer Science (in progress)</p>
+                <p>&gt; CLEARANCE: Ready for background checks / compliance onboarding</p>
               </div>
             </div>
           </section>
+        ) : null}
 
-          <section id="about" className="space-y-8">
-            <div className="flex flex-col gap-3">
-              <Badge className="w-fit border border-emerald-500/30 bg-emerald-500/15 text-emerald-100">./about</Badge>
-              <h2 className="text-3xl font-semibold text-emerald-100">Curious by default, calm under pressure</h2>
-              <p className="max-w-3xl text-lg text-emerald-200/80">
-                Years of personal tinkering with Linux, Windows, and networks taught me how to trace issues from kernel logs
-                to misconfigured policies. That same curiosity and empathy powers my help desk approach today.
-              </p>
-            </div>
-            <div className="grid gap-6 lg:grid-cols-2">
-              <Card className="border-emerald-500/25 bg-black/70">
-                <CardContent className="space-y-4 p-6 text-emerald-100/80">
-                  <p>
-                    Navigating terminal environments, managing packages, and reverse-engineering errors pushed me to
-                    understand how technology behaves beneath the interface.
-                  </p>
-                  <p>
-                    I am currently pursuing a Computer Science degree at WGU to reinforce that practical mindset with theory
-                    in algorithms, data structures, and cloud architecture.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="border-emerald-500/25 bg-black/70">
-                <CardContent className="space-y-4 p-6 text-emerald-100/80">
-                  <p>
-                    The most rewarding part of support work is translating complex failure modes into calm, confident
-                    responses for users. That means fast diagnostics, clear communication, and follow-through.
-                  </p>
-                  <p>
-                    My current focus is building lab environments that mimic production pressure so I can practise escalation,
-                    documentation, and automation in realistic conditions.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-
-          <section id="skills" className="space-y-8">
-            <div className="flex flex-col gap-3">
-              <Badge className="w-fit border border-emerald-500/30 bg-emerald-500/15 text-emerald-100">./skills</Badge>
-              <h2 className="text-3xl font-semibold text-emerald-100">Technical stack in active rotation</h2>
-              <p className="max-w-3xl text-lg text-emerald-200/80">
-                Built for operational resilience: from rapid triage and documentation to infrastructure hardening and cloud
-                security experiments.
-              </p>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {skillCategories.map((category) => {
-                const Icon = skillIconMap[category.icon]
+        {activeSection === "skills" ? (
+          <section className="rounded-lg border-2 border-emerald-500 bg-black/90 p-8 shadow-lg shadow-emerald-500/40">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-200">
+              <span className="animate-pulse">&gt;&gt;</span> SKILLS.sys
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {flattenedSkills.map((skill, index) => {
+                const progress = hashProgress(skill, index)
                 return (
-                  <Card
-                    key={category.title}
-                    className="group border-emerald-500/20 bg-black/70 shadow-[0_0_30px_rgba(16,185,129,0.12)] transition hover:border-emerald-400/60 hover:shadow-[0_0_45px_rgba(16,185,129,0.25)]"
+                  <div
+                    key={skill}
+                    className="group rounded border border-emerald-700 p-4 transition-all duration-300 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/30"
                   >
-                    <CardHeader className="flex items-center gap-3">
-                      <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-2 text-emerald-200">
-                        <Icon className="h-5 w-5" aria-hidden />
-                      </div>
-                      <CardTitle className="text-lg text-emerald-100">{category.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2 text-sm text-emerald-200/80">
-                        {category.highlights.map((highlight) => (
-                          <li key={highlight} className="flex items-start gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                            <span>{highlight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
+                    <div className="flex items-center justify-between text-emerald-100">
+                      <span className="font-semibold">{skill}</span>
+                      <span className="text-emerald-400 group-hover:animate-pulse">█</span>
+                    </div>
+                    <div className="mt-3 h-2 rounded bg-emerald-950/60">
+                      <div
+                        className="h-full rounded bg-emerald-400 transition-all duration-700 group-hover:w-full"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
                 )
               })}
             </div>
           </section>
+        ) : null}
 
-          <section id="projects" className="space-y-8">
-            <div className="flex flex-col gap-3">
-              <Badge className="w-fit border border-emerald-500/30 bg-emerald-500/15 text-emerald-100">./projects</Badge>
-              <h2 className="text-3xl font-semibold text-emerald-100">Labs, builds, and documented drills</h2>
-              <p className="max-w-3xl text-lg text-emerald-200/80">
-                Each project simulates the realities of production support—policies, permissions, ticket workflows, and
-                post-incident reporting.
-              </p>
-            </div>
-            <div className="grid gap-6 lg:grid-cols-2">
-              {projectCards.map((project) => (
-                <Card
+        {activeSection === "projects" ? (
+          <section className="rounded-lg border-2 border-emerald-500 bg-black/90 p-8 shadow-lg shadow-emerald-500/40">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-200">
+              <span className="animate-pulse">&gt;&gt;</span> PROJECTS.db
+            </h2>
+            <div className="space-y-4">
+              {projectCards.map((project, index) => (
+                <article
                   key={project.title}
-                  className="border-emerald-500/20 bg-black/70 transition hover:border-emerald-400/60 hover:shadow-[0_0_45px_rgba(16,185,129,0.22)]"
+                  className="rounded border border-emerald-700 p-6 transition-all duration-300 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/30"
                 >
-                  <CardHeader>
-                    <CardTitle className="flex items-start justify-between gap-4 text-emerald-100">
-                      <span>{project.title}</span>
-                      <Badge variant="outline" className="border-emerald-400/40 text-emerald-200">
-                        {project.subtitle}
-                      </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-emerald-200/70">
-                      {project.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-wrap gap-2">
+                  <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="text-xl font-bold text-emerald-200">&gt; {project.title}</h3>
+                    <span className="rounded border border-emerald-400 px-3 py-1 text-xs tracking-[0.3em] text-emerald-300">
+                      {projectStatuses[index % projectStatuses.length]}
+                    </span>
+                  </div>
+                  <p className="text-sm uppercase tracking-[0.2em] text-emerald-500">{project.subtitle}</p>
+                  <p className="mt-3 text-emerald-300">{project.description}</p>
+                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-emerald-400">
                     {project.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="border border-emerald-400/40 bg-emerald-500/15 text-emerald-100">
-                        {tag}
-                      </Badge>
+                      <span key={tag} className="rounded border border-emerald-600 px-2 py-1">
+                        {tag.toUpperCase()}
+                      </span>
                     ))}
-                  </CardContent>
-                </Card>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-emerald-300">
+                    <button type="button" className="transition-colors hover:text-emerald-200">
+                      [VIEW_CODE]
+                    </button>
+                    <button type="button" className="transition-colors hover:text-emerald-200">
+                      [DEMO]
+                    </button>
+                    <button type="button" className="transition-colors hover:text-emerald-200">
+                      [DOCS]
+                    </button>
+                  </div>
+                </article>
               ))}
             </div>
           </section>
+        ) : null}
 
-          <section id="intel" className="space-y-8">
-            <div className="flex flex-col gap-3">
-              <Badge className="w-fit border border-emerald-500/30 bg-emerald-500/15 text-emerald-100">./intel</Badge>
-              <h2 className="text-3xl font-semibold text-emerald-100">Roadmap: amplifying the signal</h2>
-              <p className="max-w-3xl text-lg text-emerald-200/80">
-                Ideas queued for the next iteration of this portfolio and my professional brand.
-              </p>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2">
+        {activeSection === "intel" ? (
+          <section className="rounded-lg border-2 border-emerald-500 bg-black/90 p-8 shadow-lg shadow-emerald-500/40">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-200">
+              <span className="animate-pulse">&gt;&gt;</span> INTEL.queue
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
               {upgradeIdeas.map((idea) => (
-                <Card
+                <article
                   key={idea.title}
-                  className="border-emerald-500/20 bg-black/70 transition hover:border-emerald-400/60 hover:shadow-[0_0_45px_rgba(16,185,129,0.22)]"
+                  className="rounded border border-emerald-700 p-4 transition-all duration-300 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/30"
                 >
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between text-emerald-100">
-                      <span>{idea.title}</span>
-                      <Badge variant="secondary" className="border border-emerald-400/40 bg-emerald-500/10 text-emerald-200">
-                        {idea.impact}
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm leading-relaxed text-emerald-200/80">
-                    {idea.description}
-                  </CardContent>
-                </Card>
+                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-500">Impact: {idea.impact}</p>
+                  <h3 className="mt-2 text-lg font-semibold text-emerald-200">{idea.title}</h3>
+                  <p className="mt-2 text-emerald-300">{idea.description}</p>
+                </article>
               ))}
             </div>
           </section>
+        ) : null}
 
-          <section id="contact" className="space-y-8">
-            <div className="flex flex-col gap-3">
-              <Badge className="w-fit border border-emerald-500/30 bg-emerald-500/15 text-emerald-100">./contact</Badge>
-              <h2 className="text-3xl font-semibold text-emerald-100">Deploy the first conversation</h2>
-              <p className="max-w-3xl text-lg text-emerald-200/80">
-                Whether you need rapid incident response, structured help desk documentation, or a teammate learning cloud on
-                the job, I&apos;m ready to contribute.
-              </p>
-            </div>
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-              <Card className="border-emerald-500/25 bg-black/70">
-                <CardContent className="space-y-6 p-6">
-                  <div className="flex flex-col gap-4 text-sm text-emerald-200/80">
-                    <div className="flex items-center gap-3">
-                      <Mail className="h-5 w-5 text-emerald-400" aria-hidden />
-                      <span>brayden.parish@email.com</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-emerald-400" aria-hidden />
-                      <span>(555) 123-4567</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <MapPin className="h-5 w-5 text-emerald-400" aria-hidden />
-                      <span>Your City, State</span>
-                    </div>
-                  </div>
-                  <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">
-                    Let&apos;s collaborate on modernising service desks, scaling cloud operations, or building resilient support
-                    runbooks.
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-emerald-500/25 bg-black/70">
-                <CardContent className="space-y-4 p-6">
-                  {contactLinks.map((link) => {
-                    const Icon = contactIconMap[link.icon]
-                    return (
-                      <Button
-                        key={link.label}
-                        asChild
-                        variant="outline"
-                        className="group flex w-full items-center justify-between border-emerald-400/40 bg-emerald-500/10 text-emerald-100 transition hover:bg-emerald-500/20"
+        {activeSection === "contact" ? (
+          <section className="rounded-lg border-2 border-emerald-500 bg-black/90 p-8 shadow-lg shadow-emerald-500/40">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-200">
+              <span className="animate-pulse">&gt;&gt;</span> CONTACT.init
+            </h2>
+            <div className="space-y-6">
+              <div className="rounded border border-emerald-700 p-4 text-emerald-200">
+                <p className="mb-2">&gt; ESTABLISH_CONNECTION:</p>
+                <ul className="space-y-2 pl-4 text-emerald-300">
+                  {contactLinks.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        target={link.href.startsWith("http") ? "_blank" : undefined}
+                        rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                        className="transition-colors hover:text-emerald-200"
                       >
-                        <Link href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
-                          <span className="flex items-center gap-3">
-                            <Icon className="h-4 w-4" aria-hidden />
-                            {link.label}
-                          </span>
-                          <span className="text-xs uppercase tracking-[0.2em] text-emerald-300/80">{link.detail}</span>
-                        </Link>
-                      </Button>
-                    )
-                  })}
-                </CardContent>
-              </Card>
+                        [{link.label.toUpperCase()}] {link.detail}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded border border-emerald-700 p-4 text-emerald-200">
+                <p className="mb-4">&gt; SEND_MESSAGE:</p>
+                <form className="space-y-4" aria-label="contact form">
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter your name..."
+                    className="w-full rounded border border-emerald-700 bg-black px-4 py-2 text-emerald-200 focus:border-emerald-400 focus:outline-none"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email..."
+                    className="w-full rounded border border-emerald-700 bg-black px-4 py-2 text-emerald-200 focus:border-emerald-400 focus:outline-none"
+                  />
+                  <textarea
+                    name="message"
+                    rows={4}
+                    placeholder="Type your message..."
+                    className="w-full resize-none rounded border border-emerald-700 bg-black px-4 py-2 text-emerald-200 focus:border-emerald-400 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full rounded border-2 border-emerald-500 py-2 text-emerald-200 transition-all duration-300 hover:bg-emerald-500/20"
+                  >
+                    [TRANSMIT]
+                  </button>
+                </form>
+              </div>
             </div>
           </section>
-        </main>
+        ) : null}
 
-        <footer className="border-t border-emerald-500/20 bg-black/60">
-          <div className="container mx-auto flex flex-col items-center gap-2 px-4 py-8 text-center text-sm text-emerald-300/70">
-            <div className="text-xs uppercase tracking-[0.35em] text-emerald-400/60">user@portfolio:~$</div>
-            <p>© {new Date().getFullYear()} Brayden Parish — Always debugging the future.</p>
-            <p className="text-xs text-emerald-300/60">
-              Rendered with a terminal-first mindset, tuned for hiring managers who appreciate signal over noise.
-            </p>
-          </div>
+        <footer className="mt-10 border-t-2 border-emerald-900 pt-6 text-center text-sm text-emerald-600 select-none">
+          &copy; {new Date().getFullYear()} Matrix Hacker Portfolio
         </footer>
       </div>
     </div>
