@@ -5,35 +5,20 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 
 import { contactLinks, navItems, projectCards, skillCategories, statusReadouts, upgradeIdeas } from "@/lib/portfolio-data"
-
-type MatrixDrop = {
-  id: number
-  left: number
-  delay: number
-  glyphs: string[]
-}
+import { MatrixBackground } from "@/components/matrix-background"
 
 const asciiBanner = `
  ██████╗ ██████╗  █████╗ ██╗   ██╗██████╗ ███████╗███╗   ██╗
-██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔══██╗██╔════╝████╗  ██║
-██║  ███╗██████╔╝███████║██║   ██║██████╔╝█████╗  ██╔██╗ ██║
-██║   ██║██╔══██╗██╔══██║██║   ██║██╔══██╗██╔══╝  ██║╚██╗██║
-╚██████╔╝██║  ██║██║  ██║╚██████╔╝██║  ██║███████╗██║ ╚████║
- ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝
+ ██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝██╔══██╗██╔════╝████╗  ██║
+ ██████╔╝██████╔╝███████║ ╚████╔╝ ██║  ██║█████╗  ██╔██╗ ██║
+ ██╔══██╗██╔══██╗██╔══██║  ╚██╔╝  ██║  ██║██╔══╝  ██║╚██╗██║
+ ██████╔╝██║  ██║██║  ██║   ██║   ██████╔╝███████╗██║ ╚████║
+ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═══╝
 `
 
 const terminalGreeting = "> INITIALIZING SYSTEM... WELCOME TO THE MATRIX"
 
 const projectStatuses = ["ACTIVE", "DEPLOYED", "BETA", "SCOPING"] as const
-
-function generateMatrixDrops(count: number): MatrixDrop[] {
-  return Array.from({ length: count }, (_, index) => ({
-    id: index,
-    left: Math.random() * 100,
-    delay: Math.random() * 5,
-    glyphs: Array.from({ length: 24 }, () => String.fromCharCode(0x30a0 + Math.floor(Math.random() * 96))),
-  }))
-}
 
 function hashProgress(label: string, index: number) {
   let hash = 0
@@ -46,7 +31,6 @@ function hashProgress(label: string, index: number) {
 export default function MatrixPortfolio() {
   const [terminalText, setTerminalText] = useState("")
   const [showCursor, setShowCursor] = useState(true)
-  const [matrixRain, setMatrixRain] = useState<MatrixDrop[]>([])
   const sectionOrder = useMemo(() => ["home", ...navItems.map((item) => item.id)], [])
   const [activeSection, setActiveSection] = useState(sectionOrder[0]!)
 
@@ -76,40 +60,19 @@ export default function MatrixPortfolio() {
     return () => clearInterval(cursorTimer)
   }, [])
 
-  useEffect(() => {
-    setMatrixRain(generateMatrixDrops(30))
-  }, [])
-
   return (
-    <div className="min-h-screen bg-black font-mono text-green-400">
-      <div className="pointer-events-none fixed inset-0 opacity-25">
-        {matrixRain.map((drop) => (
-          <div
-            key={drop.id}
-            className="absolute top-0 animate-[pulse_3s_infinite]"
-            style={{
-              left: `${drop.left}%`,
-              animationDelay: `${drop.delay}s`,
-            }}
-          >
-            {drop.glyphs.map((glyph, index) => (
-              <div key={`${drop.id}-${index}`} className="text-xs opacity-70">
-                {glyph}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
+    <div className="min-h-screen bg-black font-mono text-[#7dff8c]">
+      <MatrixBackground />
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 py-8">
-        <div className="mb-8 rounded-lg border-2 border-green-500 bg-black/90 p-6 shadow-lg shadow-green-500/40">
+        <div className="mb-8 rounded-lg border-2 border-[#00ff41] bg-black/90 p-6 shadow-lg shadow-[#00ff41]/40">
           <div className="mb-4 flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-red-500" />
             <span className="h-3 w-3 rounded-full bg-yellow-500" />
-            <span className="h-3 w-3 rounded-full bg-green-500" />
-            <span className="ml-4 text-sm text-green-300">root@portfolio:~$</span>
+            <span className="h-3 w-3 rounded-full bg-[#00ff41]" />
+            <span className="ml-4 text-sm text-[#63ff64]">root@portfolio:~$</span>
           </div>
-          <div className="text-2xl font-bold text-green-200">
+          <div className="text-2xl font-bold text-[#c5ffd2]">
             {terminalText}
             {showCursor ? <span className="ml-1 animate-pulse">█</span> : null}
           </div>
@@ -125,8 +88,8 @@ export default function MatrixPortfolio() {
                 onClick={() => setActiveSection(section)}
                 className={`rounded border-2 px-4 py-2 text-sm uppercase tracking-[0.25em] transition-all duration-300 ${
                   activeSection === section
-                    ? "border-green-400 bg-green-500/20 shadow-lg shadow-green-500/40"
-                    : "border-green-700 hover:border-green-400 hover:shadow-md hover:shadow-green-500/30"
+                    ? "border-[#00ff41] bg-[#00ff41]/10 shadow-lg shadow-[#00ff41]/30"
+                    : "border-[#004d1f] hover:border-[#00ff41] hover:shadow-md hover:shadow-[#00ff41]/30"
                 }`}
               >
                 {"> "}
@@ -137,22 +100,22 @@ export default function MatrixPortfolio() {
         </div>
 
         {activeSection === "home" ? (
-          <div className="animate-[pulse_4s_infinite] rounded-lg border-2 border-green-500 bg-black/90 p-8 shadow-lg shadow-green-500/40">
-            <pre className="mb-6 overflow-auto text-[0.85rem] leading-tight text-green-300">{asciiBanner}</pre>
-            <div className="space-y-3 text-lg text-green-200">
+          <div className="animate-[pulse_4s_infinite] rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+            <pre className="mb-6 overflow-auto text-[0.85rem] leading-tight text-[#7dff8c]">{asciiBanner}</pre>
+            <div className="space-y-3 text-lg text-[#c5ffd2]">
               <p>
-                &gt; STATUS: <span className="text-green-400">ONLINE</span>
+                &gt; STATUS: <span className="text-[#63ff64]">ONLINE</span>
               </p>
               <p>&gt; ROLE: IT Support Specialist → Cloud Operations</p>
               <p>&gt; LOCATION: Remote / Open to Relocation</p>
-              <p className="text-green-400">&gt; &quot;There is no spoon. Only root cause analysis.&quot;</p>
+              <p className="text-[#63ff64]">&gt; "There is no spoon. Only root cause analysis."</p>
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {statusReadouts.map((readout) => (
-                <div key={readout.label} className="rounded border border-green-600/60 bg-black/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.3em] text-green-500">{readout.label}</p>
-                  <p className="mt-2 text-xl font-semibold text-green-200">{readout.value}</p>
-                  <p className="mt-1 text-sm text-green-400">{readout.detail}</p>
+                <div key={readout.label} className="rounded border border-[#004d1f] bg-black/50 p-4">
+                  <p className="text-xs uppercase tracking-[0.3em] text-[#2cff4b]">{readout.label}</p>
+                  <p className="mt-2 text-xl font-semibold text-[#c5ffd2]">{readout.value}</p>
+                  <p className="mt-1 text-sm text-[#63ff64]">{readout.detail}</p>
                 </div>
               ))}
             </div>
@@ -160,24 +123,24 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "about" ? (
-          <section className="rounded-lg border-2 border-green-500 bg-black/90 p-8 shadow-lg shadow-green-500/40">
-            <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-green-200">
+          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+            <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> ABOUT.exe
             </h2>
-            <div className="space-y-4 text-green-200">
+            <div className="space-y-4 text-[#c5ffd2]">
               <p>
-                <span className="text-green-400">[INFO]</span> Lifelong tinkerer evolving from Linux curiosity and
+                <span className="text-[#63ff64]">[INFO]</span> Lifelong tinkerer evolving from Linux curiosity and
                 help desk empathy into resilient operations design.
               </p>
               <p>
-                <span className="text-green-400">[INFO]</span> Comfortable translating incidents into action plans,
+                <span className="text-[#63ff64]">[INFO]</span> Comfortable translating incidents into action plans,
                 guiding users through outages, and automating the repetitive work.
               </p>
               <p>
-                <span className="text-green-400">[INFO]</span> Currently completing WGU Computer Science coursework
+                <span className="text-[#63ff64]">[INFO]</span> Currently completing WGU Computer Science coursework
                 while scaling home lab simulations for Active Directory, osTicket, and AWS.
               </p>
-              <div className="mt-6 rounded border border-green-700 p-4 text-sm text-green-300">
+              <div className="mt-6 rounded border border-[#004d1f] p-4 text-sm text-[#7dff8c]">
                 <p>&gt; EXPERIENCE: Hands-on with enterprise support workflows</p>
                 <p>&gt; EDUCATION: WGU Computer Science (in progress)</p>
                 <p>&gt; CLEARANCE: Ready for background checks / compliance onboarding</p>
@@ -187,8 +150,8 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "skills" ? (
-          <section className="rounded-lg border-2 border-green-500 bg-black/90 p-8 shadow-lg shadow-green-500/40">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-green-200">
+          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> SKILLS.sys
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -197,15 +160,15 @@ export default function MatrixPortfolio() {
                 return (
                   <div
                     key={skill}
-                    className="group rounded border border-green-700 p-4 transition-all duration-300 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/30"
+                    className="group rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00ff41] hover:shadow-lg hover:shadow-[#00ff41]/30"
                   >
-                    <div className="flex items-center justify-between text-green-100">
+                    <div className="flex items-center justify-between text-[#c5ffd2]">
                       <span className="font-semibold">{skill}</span>
-                      <span className="text-green-400 group-hover:animate-pulse">█</span>
+                      <span className="text-[#63ff64] group-hover:animate-pulse">█</span>
                     </div>
-                    <div className="mt-3 h-2 rounded bg-green-950/60">
+                    <div className="mt-3 h-2 rounded bg-[#002310]/80">
                       <div
-                        className="h-full rounded bg-green-400 transition-all duration-700 group-hover:w-full"
+                        className="h-full rounded bg-[#00ff41] transition-all duration-700 group-hover:w-full"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -217,39 +180,39 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "projects" ? (
-          <section className="rounded-lg border-2 border-green-500 bg-black/90 p-8 shadow-lg shadow-green-500/40">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-green-200">
+          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> PROJECTS.db
             </h2>
             <div className="space-y-4">
               {projectCards.map((project, index) => (
                 <article
                   key={project.title}
-                  className="rounded border border-green-700 p-6 transition-all duration-300 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/30"
+                  className="rounded border border-[#004d1f] bg-black/40 p-6 transition-all duration-300 hover:border-[#00ff41] hover:shadow-lg hover:shadow-[#00ff41]/30"
                 >
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="text-xl font-bold text-green-200">&gt; {project.title}</h3>
-                    <span className="rounded border border-green-400 px-3 py-1 text-xs tracking-[0.3em] text-green-300">
+                    <h3 className="text-xl font-bold text-[#c5ffd2]">&gt; {project.title}</h3>
+                    <span className="rounded border border-[#00ff41]/60 px-3 py-1 text-xs tracking-[0.3em] text-[#7dff8c]">
                       {projectStatuses[index % projectStatuses.length]}
                     </span>
                   </div>
-                  <p className="text-sm uppercase tracking-[0.2em] text-green-500">{project.subtitle}</p>
-                  <p className="mt-3 text-green-300">{project.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-green-400">
+                  <p className="text-sm uppercase tracking-[0.2em] text-[#2cff4b]">{project.subtitle}</p>
+                  <p className="mt-3 text-[#c5ffd2]">{project.description}</p>
+                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#63ff64]">
                     {project.tags.map((tag) => (
-                      <span key={tag} className="rounded border border-green-600 px-2 py-1">
+                      <span key={tag} className="rounded border border-[#004d1f] px-2 py-1">
                         {tag.toUpperCase()}
                       </span>
                     ))}
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-green-300">
-                    <button type="button" className="transition-colors hover:text-green-200">
+                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-[#7dff8c]">
+                    <button type="button" className="transition-colors hover:text-[#c5ffd2]">
                       [VIEW_CODE]
                     </button>
-                    <button type="button" className="transition-colors hover:text-green-200">
+                    <button type="button" className="transition-colors hover:text-[#c5ffd2]">
                       [DEMO]
                     </button>
-                    <button type="button" className="transition-colors hover:text-green-200">
+                    <button type="button" className="transition-colors hover:text-[#c5ffd2]">
                       [DOCS]
                     </button>
                   </div>
@@ -260,19 +223,19 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "intel" ? (
-          <section className="rounded-lg border-2 border-green-500 bg-black/90 p-8 shadow-lg shadow-green-500/40">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-green-200">
+          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> INTEL.queue
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {upgradeIdeas.map((idea) => (
                 <article
                   key={idea.title}
-                  className="rounded border border-green-700 p-4 transition-all duration-300 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/30"
+                  className="rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00ff41] hover:shadow-lg hover:shadow-[#00ff41]/30"
                 >
-                  <p className="text-xs uppercase tracking-[0.3em] text-green-500">Impact: {idea.impact}</p>
-                  <h3 className="mt-2 text-lg font-semibold text-green-200">{idea.title}</h3>
-                  <p className="mt-2 text-green-300">{idea.description}</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-[#2cff4b]">Impact: {idea.impact}</p>
+                  <h3 className="mt-2 text-lg font-semibold text-[#c5ffd2]">{idea.title}</h3>
+                  <p className="mt-2 text-[#7dff8c]">{idea.description}</p>
                 </article>
               ))}
             </div>
@@ -280,21 +243,21 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "contact" ? (
-          <section className="rounded-lg border-2 border-green-500 bg-black/90 p-8 shadow-lg shadow-green-500/40">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-green-200">
+          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> CONTACT.init
             </h2>
             <div className="space-y-6">
-              <div className="rounded border border-green-700 p-4 text-green-200">
+              <div className="rounded border border-[#004d1f] bg-black/40 p-4 text-[#c5ffd2]">
                 <p className="mb-2">&gt; ESTABLISH_CONNECTION:</p>
-                <ul className="space-y-2 pl-4 text-green-300">
+                <ul className="space-y-2 pl-4 text-[#7dff8c]">
                   {contactLinks.map((link) => (
                     <li key={link.label}>
                       <Link
                         href={link.href}
                         target={link.href.startsWith("http") ? "_blank" : undefined}
                         rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                        className="transition-colors hover:text-green-200"
+                        className="transition-colors hover:text-[#c5ffd2]"
                       >
                         [{link.label.toUpperCase()}] {link.detail}
                       </Link>
@@ -302,30 +265,30 @@ export default function MatrixPortfolio() {
                   ))}
                 </ul>
               </div>
-              <div className="rounded border border-green-700 p-4 text-green-200">
+              <div className="rounded border border-[#004d1f] bg-black/40 p-4 text-[#c5ffd2]">
                 <p className="mb-4">&gt; SEND_MESSAGE:</p>
                 <form className="space-y-4" aria-label="contact form">
                   <input
                     type="text"
                     name="name"
                     placeholder="Enter your name..."
-                    className="w-full rounded border border-green-700 bg-black px-4 py-2 text-green-200 focus:border-green-400 focus:outline-none"
+                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00ff41] focus:outline-none"
                   />
                   <input
                     type="email"
                     name="email"
                     placeholder="Enter your email..."
-                    className="w-full rounded border border-green-700 bg-black px-4 py-2 text-green-200 focus:border-green-400 focus:outline-none"
+                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00ff41] focus:outline-none"
                   />
                   <textarea
                     name="message"
                     rows={4}
                     placeholder="Type your message..."
-                    className="w-full resize-none rounded border border-green-700 bg-black px-4 py-2 text-green-200 focus:border-green-400 focus:outline-none"
+                    className="w-full resize-none rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00ff41] focus:outline-none"
                   />
                   <button
                     type="submit"
-                    className="w-full rounded border-2 border-green-500 py-2 text-green-200 transition-all duration-300 hover:bg-green-500/20"
+                    className="w-full rounded border-2 border-[#00ff41] py-2 text-[#c5ffd2] transition-all duration-300 hover:bg-[#00ff41]/10"
                   >
                     [TRANSMIT]
                   </button>
@@ -335,7 +298,7 @@ export default function MatrixPortfolio() {
           </section>
         ) : null}
 
-        <footer className="mt-10 border-t-2 border-green-900 pt-6 text-center text-sm text-green-600 select-none">
+        <footer className="mt-10 border-t-2 border-[#003b1a] pt-6 text-center text-sm text-[#2cff4b] select-none">
           &copy; {new Date().getFullYear()} Matrix Hacker Portfolio
         </footer>
       </div>
