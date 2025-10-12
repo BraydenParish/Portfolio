@@ -29,8 +29,10 @@ function hashProgress(label: string, index: number) {
 export default function MatrixPortfolio() {
   const [terminalText, setTerminalText] = useState("")
   const [showCursor, setShowCursor] = useState(true)
-  const sectionOrder = useMemo(() => ["home", ...navItems.map((item) => item.id)], [])
-  const [activeSection, setActiveSection] = useState(sectionOrder[0]!)
+  const navigationSections = useMemo(
+    () => [{ id: "home", label: "Home", command: "./home" }, ...navItems],
+    []
+  )
 
   const flattenedSkills = useMemo(() => {
     const highlights = skillCategories.flatMap((category) => category.highlights)
@@ -143,9 +145,9 @@ export default function MatrixPortfolio() {
                 <p>&gt; EDUCATION: WGU Computer Science (in progress)</p>
                 <p>&gt; CLEARANCE: Ready for background checks / compliance onboarding</p>
               </div>
-            </div>
-          </section>
-        ) : null}
+            ))}
+          </div>
+        </section>
 
         {activeSection === "skills" ? (
           <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
@@ -174,8 +176,8 @@ export default function MatrixPortfolio() {
                 )
               })}
             </div>
-          </section>
-        ) : null}
+          </div>
+        </section>
 
         {activeSection === "intel" ? (
           <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
@@ -188,14 +190,21 @@ export default function MatrixPortfolio() {
                   key={idea.title}
                   className="rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00b33c] hover:shadow-lg hover:shadow-[#00b33c]/30"
                 >
-                  <p className="text-xs uppercase tracking-[0.3em] text-[#2cff4b]">Impact: {idea.impact}</p>
-                  <h3 className="mt-2 text-lg font-semibold text-[#c5ffd2]">{idea.title}</h3>
-                  <p className="mt-2 text-[#7dff8c]">{idea.description}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-        ) : null}
+                  <div className="flex items-center justify-between text-[#c5ffd2]">
+                    <span className="font-semibold">{skill}</span>
+                    <span className="text-[#63ff64] group-hover:animate-pulse">█</span>
+                  </div>
+                  <div className="mt-3 h-2 rounded bg-[#002310]/80">
+                    <div
+                      className="h-full rounded bg-[#00b33c] transition-all duration-700 group-hover:w-full"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
 
         {activeSection === "contact" ? (
           <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
@@ -250,8 +259,37 @@ export default function MatrixPortfolio() {
                 </form>
               </div>
             </div>
-          </section>
-        ) : null}
+            <div className="rounded border border-[#004d1f] bg-black/40 p-4 text-[#c5ffd2]">
+              <p className="mb-4">&gt; SEND_MESSAGE:</p>
+              <form className="space-y-4" aria-label="contact form">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter your name..."
+                  className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email..."
+                  className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
+                />
+                <textarea
+                  name="message"
+                  rows={4}
+                  placeholder="Type your message..."
+                  className="w-full resize-none rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="w-full rounded border-2 border-[#00b33c] bg-[#00260f] py-2 text-[#c5ffd2] transition-all duration-300 hover:bg-[#00b33c] hover:text-black"
+                >
+                  [TRANSMIT]
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
 
         <footer className="mt-10 border-t-2 border-[#003b1a] pt-6 text-center text-sm text-[#2cff4b] select-none">
           &copy; {new Date().getFullYear()} Matrix Hacker Portfolio
