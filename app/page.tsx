@@ -4,7 +4,13 @@ import { useEffect, useMemo, useState } from "react"
 
 import Link from "next/link"
 
-import { contactLinks, navItems, skillCategories, statusReadouts, upgradeIdeas } from "@/lib/portfolio-data"
+import {
+  contactLinks,
+  navItems,
+  skillCategories,
+  statusReadouts,
+  upgradeIdeas,
+} from "@/lib/portfolio-data"
 import { MatrixBackground } from "@/components/matrix-background"
 
 const asciiBanner = `
@@ -29,6 +35,8 @@ function hashProgress(label: string, index: number) {
 export default function MatrixPortfolio() {
   const [terminalText, setTerminalText] = useState("")
   const [showCursor, setShowCursor] = useState(true)
+  const [activeSection, setActiveSection] = useState("home")
+
   const navigationSections = useMemo(
     () => [{ id: "home", label: "Home", command: "./home" }, ...navItems],
     []
@@ -79,116 +87,102 @@ export default function MatrixPortfolio() {
         </div>
 
         <div className="mb-8 flex flex-wrap gap-4">
-          {sectionOrder.map((section) => {
-            const label = section === "home" ? "Home" : navItems.find((item) => item.id === section)?.label ?? section
+          {navigationSections.map((section) => {
+            const isActive = activeSection === section.id
+            const label = section.label.toUpperCase()
             return (
               <button
-                key={section}
+                key={section.id}
                 type="button"
-                onClick={() => setActiveSection(section)}
+                onClick={() => setActiveSection(section.id)}
                 className={`rounded border-2 px-4 py-2 text-sm uppercase tracking-[0.25em] transition-all duration-300 ${
-                  activeSection === section
+                  isActive
                     ? "border-[#00b33c] bg-[#00b33c] text-black shadow-lg shadow-[#00b33c]/30"
                     : "border-[#004d1f] text-[#c5ffd2] hover:border-[#00b33c] hover:bg-[#0a2d15] hover:text-[#d8ffe2] hover:shadow-md hover:shadow-[#00b33c]/25"
                 }`}
               >
                 {"> "}
-                {label.toUpperCase()}
+                {label}
               </button>
             )
           })}
         </div>
 
-        {activeSection === "home" ? (
-          <div className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
-            <pre className="mb-6 overflow-auto text-[0.85rem] leading-tight text-[#7dff8c]">{asciiBanner}</pre>
-            <div className="space-y-3 text-lg text-[#c5ffd2]">
-              <p>
-                &gt; STATUS: <span className="text-[#63ff64]">ONLINE</span>
-              </p>
-              <p>&gt; ROLE: IT Support Specialist → Cloud Operations</p>
-              <p>&gt; LOCATION: Remote / Open to Relocation</p>
-              <p className="text-[#63ff64]">&gt; &quot;There is no spoon. Only root cause analysis.&quot;</p>
-            </div>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {statusReadouts.map((readout) => (
-                <div key={readout.label} className="rounded border border-[#004d1f] bg-black/50 p-4">
-                  <p className="text-xs uppercase tracking-[0.3em] text-[#2cff4b]">{readout.label}</p>
-                  <p className="mt-2 text-xl font-semibold text-[#c5ffd2]">{readout.value}</p>
-                  <p className="mt-1 text-sm text-[#63ff64]">{readout.detail}</p>
-                </div>
-              ))}
-            </div>
+        <section
+          aria-hidden={activeSection !== "home"}
+          data-section="home"
+          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
+            activeSection === "home" ? "" : "hidden"
+          }`}
+        >
+          <pre className="mb-6 overflow-auto text-[0.85rem] leading-tight text-[#7dff8c]">{asciiBanner}</pre>
+          <div className="space-y-3 text-lg text-[#c5ffd2]">
+            <p>
+              &gt; STATUS: <span className="text-[#63ff64]">ONLINE</span>
+            </p>
+            <p>&gt; ROLE: IT Support Specialist → Cloud Operations</p>
+            <p>&gt; LOCATION: Remote / Open to Relocation</p>
+            <p className="text-[#63ff64]">&gt; &quot;There is no spoon. Only root cause analysis.&quot;</p>
           </div>
-        ) : null}
-
-        {activeSection === "about" ? (
-          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
-            <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
-              <span className="animate-pulse">&gt;&gt;</span> ABOUT.exe
-            </h2>
-            <div className="space-y-4 text-[#c5ffd2]">
-              <p>
-                <span className="text-[#63ff64]">[INFO]</span> Lifelong tinkerer evolving from Linux curiosity and
-                help desk empathy into resilient operations design.
-              </p>
-              <p>
-                <span className="text-[#63ff64]">[INFO]</span> Comfortable translating incidents into action plans,
-                guiding users through outages, and automating the repetitive work.
-              </p>
-              <p>
-                <span className="text-[#63ff64]">[INFO]</span> Currently completing WGU Computer Science coursework
-                while scaling home lab simulations for Active Directory, osTicket, and AWS.
-              </p>
-              <div className="mt-6 rounded border border-[#004d1f] p-4 text-sm text-[#7dff8c]">
-                <p>&gt; EXPERIENCE: Hands-on with enterprise support workflows</p>
-                <p>&gt; EDUCATION: WGU Computer Science (in progress)</p>
-                <p>&gt; CLEARANCE: Ready for background checks / compliance onboarding</p>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {statusReadouts.map((readout) => (
+              <div key={readout.label} className="rounded border border-[#004d1f] bg-black/50 p-4">
+                <p className="text-xs uppercase tracking-[0.3em] text-[#2cff4b]">{readout.label}</p>
+                <p className="mt-2 text-xl font-semibold text-[#c5ffd2]">{readout.value}</p>
+                <p className="mt-1 text-sm text-[#63ff64]">{readout.detail}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {activeSection === "skills" ? (
-          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
-              <span className="animate-pulse">&gt;&gt;</span> SKILLS.sys
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {flattenedSkills.map((skill, index) => {
-                const progress = hashProgress(skill, index)
-                return (
-                  <div
-                    key={skill}
-                    className="group rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00b33c] hover:shadow-lg hover:shadow-[#00b33c]/30"
-                  >
-                    <div className="flex items-center justify-between text-[#c5ffd2]">
-                      <span className="font-semibold">{skill}</span>
-                      <span className="text-[#63ff64] group-hover:animate-pulse">█</span>
-                    </div>
-                    <div className="mt-3 h-2 rounded bg-[#002310]/80">
-                      <div
-                        className="h-full rounded bg-[#00b33c] transition-all duration-700 group-hover:w-full"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
+        <section
+          aria-hidden={activeSection !== "about"}
+          data-section="about"
+          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
+            activeSection === "about" ? "" : "hidden"
+          }`}
+        >
+          <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
+            <span className="animate-pulse">&gt;&gt;</span> ABOUT.exe
+          </h2>
+          <div className="space-y-4 text-[#c5ffd2]">
+            <p>
+              <span className="text-[#63ff64]">[INFO]</span> Lifelong tinkerer evolving from Linux curiosity and help desk empathy
+              into resilient operations design.
+            </p>
+            <p>
+              <span className="text-[#63ff64]">[INFO]</span> Comfortable translating incidents into action plans, guiding users through
+              outages, and automating the repetitive work.
+            </p>
+            <p>
+              <span className="text-[#63ff64]">[INFO]</span> Currently completing WGU Computer Science coursework while scaling home
+              lab simulations for Active Directory, osTicket, and AWS.
+            </p>
+            <div className="mt-6 rounded border border-[#004d1f] p-4 text-sm text-[#7dff8c]">
+              <p>&gt; EXPERIENCE: Hands-on with enterprise support workflows</p>
+              <p>&gt; EDUCATION: WGU Computer Science (in progress)</p>
+              <p>&gt; CLEARANCE: Ready for background checks / compliance onboarding</p>
             </div>
           </div>
         </section>
 
-        {activeSection === "intel" ? (
-          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
-              <span className="animate-pulse">&gt;&gt;</span> INTEL.queue
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {upgradeIdeas.map((idea) => (
-                <article
-                  key={idea.title}
-                  className="rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00b33c] hover:shadow-lg hover:shadow-[#00b33c]/30"
+        <section
+          aria-hidden={activeSection !== "skills"}
+          data-section="skills"
+          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
+            activeSection === "skills" ? "" : "hidden"
+          }`}
+        >
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
+            <span className="animate-pulse">&gt;&gt;</span> SKILLS.sys
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {flattenedSkills.map((skill, index) => {
+              const progress = hashProgress(skill, index)
+              return (
+                <div
+                  key={skill}
+                  className="group rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00b33c] hover:shadow-lg hover:shadow-[#00b33c]/30"
                 >
                   <div className="flex items-center justify-between text-[#c5ffd2]">
                     <span className="font-semibold">{skill}</span>
@@ -206,58 +200,59 @@ export default function MatrixPortfolio() {
           </div>
         </section>
 
-        {activeSection === "contact" ? (
-          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
-              <span className="animate-pulse">&gt;&gt;</span> CONTACT.init
-            </h2>
-            <div className="space-y-6">
-              <div className="rounded border border-[#004d1f] bg-black/40 p-4 text-[#c5ffd2]">
-                <p className="mb-2">&gt; ESTABLISH_CONNECTION:</p>
-                <ul className="space-y-2 pl-4 text-[#7dff8c]">
-                  {contactLinks.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        target={link.href.startsWith("http") ? "_blank" : undefined}
-                        rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                        className="transition-colors hover:text-[#c5ffd2]"
-                      >
-                        [{link.label.toUpperCase()}] {link.detail}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded border border-[#004d1f] bg-black/40 p-4 text-[#c5ffd2]">
-                <p className="mb-4">&gt; SEND_MESSAGE:</p>
-                <form className="space-y-4" aria-label="contact form">
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter your name..."
-                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
-                  />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email..."
-                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
-                  />
-                  <textarea
-                    name="message"
-                    rows={4}
-                    placeholder="Type your message..."
-                    className="w-full resize-none rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full rounded border-2 border-[#00b33c] bg-[#00260f] py-2 text-[#c5ffd2] transition-all duration-300 hover:bg-[#00b33c] hover:text-black"
-                  >
-                    [TRANSMIT]
-                  </button>
-                </form>
-              </div>
+        <section
+          aria-hidden={activeSection !== "intel"}
+          data-section="intel"
+          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
+            activeSection === "intel" ? "" : "hidden"
+          }`}
+        >
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
+            <span className="animate-pulse">&gt;&gt;</span> INTEL.queue
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {upgradeIdeas.map((idea) => (
+              <article
+                key={idea.title}
+                className="rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00b33c] hover:shadow-lg hover:shadow-[#00b33c]/30"
+              >
+                <div className="flex items-center justify-between text-[#c5ffd2]">
+                  <span className="font-semibold">{idea.title}</span>
+                  <span className="text-xs uppercase tracking-[0.2em] text-[#63ff64]">[{idea.impact}]</span>
+                </div>
+                <p className="mt-3 text-sm text-[#7dff8c]">{idea.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          aria-hidden={activeSection !== "contact"}
+          data-section="contact"
+          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
+            activeSection === "contact" ? "" : "hidden"
+          }`}
+        >
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
+            <span className="animate-pulse">&gt;&gt;</span> CONTACT.init
+          </h2>
+          <div className="space-y-6">
+            <div className="rounded border border-[#004d1f] bg-black/40 p-4 text-[#c5ffd2]">
+              <p className="mb-2">&gt; ESTABLISH_CONNECTION:</p>
+              <ul className="space-y-2 pl-4 text-[#7dff8c]">
+                {contactLinks.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      target={link.href.startsWith("http") ? "_blank" : undefined}
+                      rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                      className="transition-colors hover:text-[#c5ffd2]"
+                    >
+                      [{link.label.toUpperCase()}] {link.detail}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="rounded border border-[#004d1f] bg-black/40 p-4 text-[#c5ffd2]">
               <p className="mb-4">&gt; SEND_MESSAGE:</p>
@@ -291,7 +286,7 @@ export default function MatrixPortfolio() {
           </div>
         </section>
 
-        <footer className="mt-10 border-t-2 border-[#003b1a] pt-6 text-center text-sm text-[#2cff4b] select-none">
+        <footer className="mt-10 select-none border-t-2 border-[#003b1a] pt-6 text-center text-sm text-[#2cff4b]">
           &copy; {new Date().getFullYear()} Matrix Hacker Portfolio
         </footer>
       </div>
