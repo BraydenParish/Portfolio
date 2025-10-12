@@ -39,7 +39,6 @@ export type UpgradeIdea = {
 export const navItems: NavItem[] = [
   { id: "about", label: "About", command: "./about" },
   { id: "skills", label: "Skills", command: "./skills" },
-  { id: "projects", label: "Projects", command: "./projects" },
   { id: "intel", label: "Intel", command: "./intel" },
   { id: "contact", label: "Contact", command: "./contact" },
 ]
@@ -113,36 +112,7 @@ export const skillCategories: SkillCategory[] = [
   },
 ]
 
-export const projectCards: ProjectCard[] = [
-  {
-    title: "Active Directory Control Lab",
-    subtitle: "Simulated corporate network with policy enforcement",
-    description:
-      "Engineered a Windows Server domain with staged OU policies, scripted provisioning, and break/fix drills to sharpen response time.",
-    tags: ["Windows Server", "Active Directory", "Group Policy", "Troubleshooting"],
-  },
-  {
-    title: "IT Service Desk Command Center",
-    subtitle: "osTicket deployment for realistic incident flow",
-    description:
-      "Deployed osTicket with SLA routing, form automation, and reporting views to practice structured ticket handling and communication.",
-    tags: ["osTicket", "Help Desk", "SLA", "Automation"],
-  },
-  {
-    title: "Secure AWS Storage Pipeline",
-    subtitle: "Guard-railed data access with IAM least privilege",
-    description:
-      "Built an S3-backed storage workflow including encryption, lifecycle policies, and IAM roles to demonstrate cloud security fundamentals.",
-    tags: ["AWS", "S3", "IAM", "Security"],
-  },
-  {
-    title: "Help Desk Field Manual",
-    subtitle: "Scenario-driven troubleshooting knowledge base",
-    description:
-      "Documented reproducible playbooks for recurring end-user issues with command references, verification steps, and rollback plans.",
-    tags: ["Documentation", "Process", "Troubleshooting", "Knowledge Base"],
-  },
-]
+export const projectCards: ProjectCard[] = []
 
 export const contactLinks: ContactLink[] = [
   {
