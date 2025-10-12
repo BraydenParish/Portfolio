@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 
 import Link from "next/link"
 
-import { contactLinks, navItems, projectCards, skillCategories, statusReadouts, upgradeIdeas } from "@/lib/portfolio-data"
+import { contactLinks, navItems, skillCategories, statusReadouts, upgradeIdeas } from "@/lib/portfolio-data"
 import { MatrixBackground } from "@/components/matrix-background"
 
 const asciiBanner = `
@@ -17,8 +17,6 @@ const asciiBanner = `
 `
 
 const terminalGreeting = "> INITIALIZING SYSTEM... WELCOME TO THE MATRIX"
-
-const projectStatuses = ["ACTIVE", "DEPLOYED", "BETA", "SCOPING"] as const
 
 function hashProgress(label: string, index: number) {
   let hash = 0
@@ -108,7 +106,7 @@ export default function MatrixPortfolio() {
               </p>
               <p>&gt; ROLE: IT Support Specialist → Cloud Operations</p>
               <p>&gt; LOCATION: Remote / Open to Relocation</p>
-              <p className="text-[#63ff64]">&gt; "There is no spoon. Only root cause analysis."</p>
+              <p className="text-[#63ff64]">&gt; &quot;There is no spoon. Only root cause analysis.&quot;</p>
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {statusReadouts.map((readout) => (
@@ -175,49 +173,6 @@ export default function MatrixPortfolio() {
                   </div>
                 )
               })}
-            </div>
-          </section>
-        ) : null}
-
-        {activeSection === "projects" ? (
-          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
-              <span className="animate-pulse">&gt;&gt;</span> PROJECTS.db
-            </h2>
-            <div className="space-y-4">
-              {projectCards.map((project, index) => (
-                <article
-                  key={project.title}
-                  className="rounded border border-[#004d1f] bg-black/40 p-6 transition-all duration-300 hover:border-[#00ff41] hover:shadow-lg hover:shadow-[#00ff41]/30"
-                >
-                  <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="text-xl font-bold text-[#c5ffd2]">&gt; {project.title}</h3>
-                    <span className="rounded border border-[#00ff41]/60 px-3 py-1 text-xs tracking-[0.3em] text-[#7dff8c]">
-                      {projectStatuses[index % projectStatuses.length]}
-                    </span>
-                  </div>
-                  <p className="text-sm uppercase tracking-[0.2em] text-[#2cff4b]">{project.subtitle}</p>
-                  <p className="mt-3 text-[#c5ffd2]">{project.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#63ff64]">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="rounded border border-[#004d1f] px-2 py-1">
-                        {tag.toUpperCase()}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-[#7dff8c]">
-                    <button type="button" className="transition-colors hover:text-[#c5ffd2]">
-                      [VIEW_CODE]
-                    </button>
-                    <button type="button" className="transition-colors hover:text-[#c5ffd2]">
-                      [DEMO]
-                    </button>
-                    <button type="button" className="transition-colors hover:text-[#c5ffd2]">
-                      [DOCS]
-                    </button>
-                  </div>
-                </article>
-              ))}
             </div>
           </section>
         ) : null}

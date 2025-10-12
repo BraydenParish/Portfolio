@@ -19,7 +19,7 @@ describe("portfolio data", () => {
   })
 
   it("orders nav items to match interactive sections", () => {
-    const expectedOrder = ["about", "skills", "projects", "intel", "contact"]
+    const expectedOrder = ["about", "skills", "intel", "contact"]
     expect(navItems.map((item) => item.id)).toEqual(expectedOrder)
   })
 
@@ -28,10 +28,8 @@ describe("portfolio data", () => {
     expect(protocols).toEqual(["mailto", "https", "https", "tel"])
   })
 
-  it("prioritises project storytelling", () => {
-    const tagCounts = projectCards.map((card) => card.tags.length)
-    expect(tagCounts.every((count) => count >= 4)).toBe(true)
-    expect(projectCards.map((card) => card.description.length).every((len) => len > 100)).toBe(true)
+  it("omits project cards when none are available", () => {
+    expect(projectCards).toHaveLength(0)
   })
 
   it("status readouts reinforce positioning", () => {
@@ -55,5 +53,6 @@ describe("portfolio data", () => {
 
     const sectionsFromNav = navItems.map((item) => item.id)
     expect(new Set(sectionsFromNav).size).toBe(sectionsFromNav.length)
+    expect(sectionsFromNav.includes("projects")).toBe(false)
   })
 })
