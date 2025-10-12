@@ -12,6 +12,7 @@ vi.mock("next/link", () => ({
 
 import MatrixPortfolio from "../app/page"
 import { MatrixBackground } from "../components/matrix-background"
+import { contactLinks, navItems, upgradeIdeas } from "../lib/portfolio-data"
 
 describe("UI adjustments", () => {
   it("renders a static matrix background without canvas", () => {
@@ -35,5 +36,41 @@ describe("UI adjustments", () => {
   it("uses the darker accent green for highlighted UI", () => {
     const markup = renderToStaticMarkup(<MatrixPortfolio />)
     expect(markup).toContain("#00b33c")
+  })
+
+  it("renders navigation commands for every section including home", () => {
+    const markup = renderToStaticMarkup(<MatrixPortfolio />)
+    const buttonTexts = [...markup.matchAll(/<button[^>]+type=\"button\"[^>]*>(.*?)<\/button>/g)].map(([, content]) =>
+      content.replace(/<[^>]+>/g, "").replace(/&gt;/g, ">").trim()
+    )
+
+    const expected = ["HOME", ...navItems.map((item) => item.label.toUpperCase())].map(
+      (label) => `> ${label}`
+    )
+
+    expect(buttonTexts).toEqual(expected)
+  })
+
+  it("prints upgrade ideas with titles and descriptions", () => {
+    const markup = renderToStaticMarkup(<MatrixPortfolio />)
+
+    for (const idea of upgradeIdeas) {
+      expect(markup).toContain(idea.title)
+      expect(markup).toContain(idea.description)
+    }
+  })
+
+  it("avoids duplicate contact forms", () => {
+    const markup = renderToStaticMarkup(<MatrixPortfolio />)
+    const formCount = [...markup.matchAll(/<form\b/g)].length
+
+    // one form for contacting, no duplicates rendered unintentionally
+    expect(formCount).toBe(1)
+
+    const normalizedMarkup = markup.replace(/&amp;/g, "&")
+
+    for (const link of contactLinks) {
+      expect(normalizedMarkup).toContain(link.detail)
+    }
   })
 })
