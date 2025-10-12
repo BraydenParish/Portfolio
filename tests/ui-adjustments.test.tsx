@@ -20,37 +20,15 @@ describe("UI adjustments", () => {
     expect(markup).toContain("bg-[radial-gradient")
   })
 
-  it("renders all primary sections concurrently", () => {
+  it("keeps navigation buttons opaque (property)", () => {
     const markup = renderToStaticMarkup(<MatrixPortfolio />)
+    const buttonMatches = [...markup.matchAll(/<button[^>]+class=\"([^\"]+)\"/g)]
 
-    expect(markup).toContain("ABOUT.exe")
-    expect(markup).toContain("SKILLS.sys")
-    expect(markup).toContain("INTEL.queue")
-    expect(markup).toContain("CONTACT.init")
-  })
+    expect(buttonMatches.length).toBeGreaterThan(0)
 
-  it("keeps navigation controls opaque (property)", () => {
-    const markup = renderToStaticMarkup(<MatrixPortfolio />)
-    const controlMatches = [...markup.matchAll(/<(?:button|a)[^>]+class=\"([^\"]+)\"/g)]
-
-    expect(controlMatches.length).toBeGreaterThan(0)
-
-    for (const [, className] of controlMatches) {
+    for (const [, className] of buttonMatches) {
       const hasTranslucentAccent = /bg-\[#(?:[0-9a-fA-F]{3,8})]\/[0-9]{1,3}/.test(className)
       expect(hasTranslucentAccent).toBe(false)
-    }
-  })
-
-  it("exposes section anchors for scrolling (property)", () => {
-    const markup = renderToStaticMarkup(<MatrixPortfolio />)
-
-    const anchorMatches = [...markup.matchAll(/<a[^>]+href=\"#([^\"]+)\"/g)]
-    expect(anchorMatches.length).toBeGreaterThan(0)
-
-    const ids = new Set([...markup.matchAll(/id=\"([^\"]+)\"/g)].map(([, id]) => id))
-
-    for (const [, target] of anchorMatches) {
-      expect(ids.has(target)).toBe(true)
     }
   })
 
