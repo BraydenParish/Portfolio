@@ -63,11 +63,11 @@ export default function MatrixPortfolio() {
       <MatrixBackground />
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 py-8">
-        <div className="mb-8 rounded-lg border-2 border-[#00ff41] bg-black/90 p-6 shadow-lg shadow-[#00ff41]/40">
+        <div className="mb-8 rounded-lg border-2 border-[#00b33c] bg-[#041407] p-6 shadow-lg shadow-[#00b33c]/40">
           <div className="mb-4 flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-red-500" />
             <span className="h-3 w-3 rounded-full bg-yellow-500" />
-            <span className="h-3 w-3 rounded-full bg-[#00ff41]" />
+            <span className="h-3 w-3 rounded-full bg-[#00b33c]" />
             <span className="ml-4 text-sm text-[#63ff64]">root@portfolio:~$</span>
           </div>
           <div className="text-2xl font-bold text-[#c5ffd2]">
@@ -86,8 +86,8 @@ export default function MatrixPortfolio() {
                 onClick={() => setActiveSection(section)}
                 className={`rounded border-2 px-4 py-2 text-sm uppercase tracking-[0.25em] transition-all duration-300 ${
                   activeSection === section
-                    ? "border-[#00ff41] bg-[#00ff41]/10 shadow-lg shadow-[#00ff41]/30"
-                    : "border-[#004d1f] hover:border-[#00ff41] hover:shadow-md hover:shadow-[#00ff41]/30"
+                    ? "border-[#00b33c] bg-[#00b33c] text-black shadow-lg shadow-[#00b33c]/30"
+                    : "border-[#004d1f] text-[#c5ffd2] hover:border-[#00b33c] hover:bg-[#0a2d15] hover:text-[#d8ffe2] hover:shadow-md hover:shadow-[#00b33c]/25"
                 }`}
               >
                 {"> "}
@@ -98,7 +98,7 @@ export default function MatrixPortfolio() {
         </div>
 
         {activeSection === "home" ? (
-          <div className="animate-[pulse_4s_infinite] rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+          <div className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
             <pre className="mb-6 overflow-auto text-[0.85rem] leading-tight text-[#7dff8c]">{asciiBanner}</pre>
             <div className="space-y-3 text-lg text-[#c5ffd2]">
               <p>
@@ -121,7 +121,7 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "about" ? (
-          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
             <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> ABOUT.exe
             </h2>
@@ -148,7 +148,7 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "skills" ? (
-          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
             <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> SKILLS.sys
             </h2>
@@ -158,7 +158,7 @@ export default function MatrixPortfolio() {
                 return (
                   <div
                     key={skill}
-                    className="group rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00ff41] hover:shadow-lg hover:shadow-[#00ff41]/30"
+                    className="group rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00b33c] hover:shadow-lg hover:shadow-[#00b33c]/30"
                   >
                     <div className="flex items-center justify-between text-[#c5ffd2]">
                       <span className="font-semibold">{skill}</span>
@@ -166,7 +166,7 @@ export default function MatrixPortfolio() {
                     </div>
                     <div className="mt-3 h-2 rounded bg-[#002310]/80">
                       <div
-                        className="h-full rounded bg-[#00ff41] transition-all duration-700 group-hover:w-full"
+                        className="h-full rounded bg-[#00b33c] transition-all duration-700 group-hover:w-full"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -178,7 +178,7 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "intel" ? (
-          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
             <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> INTEL.queue
             </h2>
@@ -186,7 +186,7 @@ export default function MatrixPortfolio() {
               {upgradeIdeas.map((idea) => (
                 <article
                   key={idea.title}
-                  className="rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00ff41] hover:shadow-lg hover:shadow-[#00ff41]/30"
+                  className="rounded border border-[#004d1f] bg-black/40 p-4 transition-all duration-300 hover:border-[#00b33c] hover:shadow-lg hover:shadow-[#00b33c]/30"
                 >
                   <p className="text-xs uppercase tracking-[0.3em] text-[#2cff4b]">Impact: {idea.impact}</p>
                   <h3 className="mt-2 text-lg font-semibold text-[#c5ffd2]">{idea.title}</h3>
@@ -198,7 +198,7 @@ export default function MatrixPortfolio() {
         ) : null}
 
         {activeSection === "contact" ? (
-          <section className="rounded-lg border-2 border-[#00ff41] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00ff41]/30">
+          <section className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
             <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
               <span className="animate-pulse">&gt;&gt;</span> CONTACT.init
             </h2>
@@ -227,23 +227,23 @@ export default function MatrixPortfolio() {
                     type="text"
                     name="name"
                     placeholder="Enter your name..."
-                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00ff41] focus:outline-none"
+                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
                   />
                   <input
                     type="email"
                     name="email"
                     placeholder="Enter your email..."
-                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00ff41] focus:outline-none"
+                    className="w-full rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
                   />
                   <textarea
                     name="message"
                     rows={4}
                     placeholder="Type your message..."
-                    className="w-full resize-none rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00ff41] focus:outline-none"
+                    className="w-full resize-none rounded border border-[#004d1f] bg-[#000b05] px-4 py-2 text-[#c5ffd2] focus:border-[#00b33c] focus:outline-none"
                   />
                   <button
                     type="submit"
-                    className="w-full rounded border-2 border-[#00ff41] py-2 text-[#c5ffd2] transition-all duration-300 hover:bg-[#00ff41]/10"
+                    className="w-full rounded border-2 border-[#00b33c] bg-[#00260f] py-2 text-[#c5ffd2] transition-all duration-300 hover:bg-[#00b33c] hover:text-black"
                   >
                     [TRANSMIT]
                   </button>
