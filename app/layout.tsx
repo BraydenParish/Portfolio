@@ -1,9 +1,5 @@
 import type { Metadata } from "next"
-import { Share_Tech_Mono } from "next/font/google"
-
 import "./globals.css"
-
-const techMono = Share_Tech_Mono({ subsets: ["latin"], weight: "400" })
 
 export const metadata: Metadata = {
   title: "Brayden Parish",
@@ -18,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="bg-background text-foreground">
-      <body className={techMono.className}>{children}</body>
+      <body className="font-mono antialiased">{children}</body>
     </html>
   )
 }
