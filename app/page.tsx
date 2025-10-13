@@ -35,6 +35,8 @@ function hashProgress(label: string, index: number) {
 export default function MatrixPortfolio() {
   const [terminalText, setTerminalText] = useState("")
   const [showCursor, setShowCursor] = useState(true)
+  const [activeSection, setActiveSection] = useState("home")
+
   const navigationSections = useMemo(
     () => [{ id: "home", label: "Home", command: "./home" }, ...navItems],
     []
