@@ -86,35 +86,29 @@ export default function MatrixPortfolio() {
           </div>
         </div>
 
-        <div className="mb-8 flex flex-wrap gap-4">
+        <nav className="mb-8 flex flex-wrap gap-4" aria-label="Primary">
           {navigationSections.map((section) => {
-            const isActive = activeSection === section.id
+            const isHome = section.id === "home"
             const label = section.label.toUpperCase()
             return (
-              <button
+              <Link
                 key={section.id}
-                type="button"
-                onClick={() => setActiveSection(section.id)}
+                href={`#${section.id}`}
                 className={`rounded border-2 px-4 py-2 text-sm uppercase tracking-[0.25em] transition-all duration-300 ${
-                  isActive
+                  isHome
                     ? "border-[#00b33c] bg-[#00b33c] text-black shadow-lg shadow-[#00b33c]/30"
                     : "border-[#004d1f] text-[#c5ffd2] hover:border-[#00b33c] hover:bg-[#0a2d15] hover:text-[#d8ffe2] hover:shadow-md hover:shadow-[#00b33c]/25"
                 }`}
               >
                 {"> "}
                 {label}
-              </button>
+              </Link>
             )
           })}
-        </div>
+        </nav>
 
-        <section
-          aria-hidden={activeSection !== "home"}
-          data-section="home"
-          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
-            activeSection === "home" ? "" : "hidden"
-          }`}
-        >
+        <section id="home" className="rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30">
+          <h2 className="sr-only">Home</h2>
           <pre className="mb-6 overflow-auto text-[0.85rem] leading-tight text-[#7dff8c]">{asciiBanner}</pre>
           <div className="space-y-3 text-lg text-[#c5ffd2]">
             <p>
@@ -136,11 +130,8 @@ export default function MatrixPortfolio() {
         </section>
 
         <section
-          aria-hidden={activeSection !== "about"}
-          data-section="about"
-          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
-            activeSection === "about" ? "" : "hidden"
-          }`}
+          id="about"
+          className="mt-10 rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30"
         >
           <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
             <span className="animate-pulse">&gt;&gt;</span> ABOUT.exe
@@ -167,11 +158,8 @@ export default function MatrixPortfolio() {
         </section>
 
         <section
-          aria-hidden={activeSection !== "skills"}
-          data-section="skills"
-          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
-            activeSection === "skills" ? "" : "hidden"
-          }`}
+          id="skills"
+          className="mt-10 rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30"
         >
           <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
             <span className="animate-pulse">&gt;&gt;</span> SKILLS.sys
@@ -201,11 +189,8 @@ export default function MatrixPortfolio() {
         </section>
 
         <section
-          aria-hidden={activeSection !== "intel"}
-          data-section="intel"
-          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
-            activeSection === "intel" ? "" : "hidden"
-          }`}
+          id="intel"
+          className="mt-10 rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30"
         >
           <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
             <span className="animate-pulse">&gt;&gt;</span> INTEL.queue
@@ -227,11 +212,8 @@ export default function MatrixPortfolio() {
         </section>
 
         <section
-          aria-hidden={activeSection !== "contact"}
-          data-section="contact"
-          className={`rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30 ${
-            activeSection === "contact" ? "" : "hidden"
-          }`}
+          id="contact"
+          className="mt-10 rounded-lg border-2 border-[#00b33c] bg-[#00160a]/95 p-8 shadow-lg shadow-[#00b33c]/30"
         >
           <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#c5ffd2]">
             <span className="animate-pulse">&gt;&gt;</span> CONTACT.init

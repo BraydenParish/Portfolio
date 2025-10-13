@@ -21,13 +21,13 @@ describe("UI adjustments", () => {
     expect(markup).toContain("bg-[radial-gradient")
   })
 
-  it("keeps navigation buttons opaque (property)", () => {
+  it("keeps navigation controls opaque (property)", () => {
     const markup = renderToStaticMarkup(<MatrixPortfolio />)
-    const buttonMatches = [...markup.matchAll(/<button[^>]+class=\"([^\"]+)\"/g)]
+    const linkMatches = [...markup.matchAll(/<a[^>]+href=\"#([^"]+)\"[^>]*class=\"([^\"]+)\"/g)]
 
-    expect(buttonMatches.length).toBeGreaterThan(0)
+    expect(linkMatches.length).toBeGreaterThan(0)
 
-    for (const [, className] of buttonMatches) {
+    for (const [, , className] of linkMatches) {
       const hasTranslucentAccent = /bg-\[#(?:[0-9a-fA-F]{3,8})]\/[0-9]{1,3}/.test(className)
       expect(hasTranslucentAccent).toBe(false)
     }
@@ -40,7 +40,7 @@ describe("UI adjustments", () => {
 
   it("renders navigation commands for every section including home", () => {
     const markup = renderToStaticMarkup(<MatrixPortfolio />)
-    const buttonTexts = [...markup.matchAll(/<button[^>]+type=\"button\"[^>]*>(.*?)<\/button>/g)].map(([, content]) =>
+    const linkTexts = [...markup.matchAll(/<a[^>]+href=\"#([^"]+)\"[^>]*>(.*?)<\/a>/g)].map(([, , content]) =>
       content.replace(/<[^>]+>/g, "").replace(/&gt;/g, ">").trim()
     )
 
@@ -48,7 +48,32 @@ describe("UI adjustments", () => {
       (label) => `> ${label}`
     )
 
-    expect(buttonTexts).toEqual(expected)
+    expect(linkTexts).toEqual(expected)
+  })
+
+  it("renders all primary sections concurrently", () => {
+    const markup = renderToStaticMarkup(<MatrixPortfolio />)
+    const sectionIds = ["home", ...navItems.map((item) => item.id)]
+
+    for (const id of sectionIds) {
+      expect(markup).toMatch(new RegExp(`<section[^>]+id=\\"${id}\\"`))
+    }
+
+    expect(markup).not.toContain("aria-hidden")
+    expect(markup).not.toContain(" hidden")
+  })
+
+  it("exposes matching anchors for each primary section (property)", () => {
+    const markup = renderToStaticMarkup(<MatrixPortfolio />)
+    const sectionIds = new Set(
+      [...markup.matchAll(/<section[^>]+id=\"([^\"]+)\"/g)].map(([, id]) => id)
+    )
+    const anchorTargets = [...markup.matchAll(/<a[^>]+href=\"#([^\"]+)\"/g)].map(([, target]) => target)
+
+    expect(anchorTargets.length).toBe(sectionIds.size)
+    for (const target of anchorTargets) {
+      expect(sectionIds.has(target)).toBe(true)
+    }
   })
 
   it("prints upgrade ideas with titles and descriptions", () => {
