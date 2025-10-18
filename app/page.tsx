@@ -114,9 +114,9 @@ export default function MatrixPortfolio() {
             <p>
               &gt; STATUS: <span className="text-[#63ff64]">ONLINE</span>
             </p>
-            <p>&gt; ROLE: IT Support Specialist → Cloud Operations</p>
-            <p>&gt; LOCATION: Remote / Open to Relocation</p>
-            <p className="text-[#63ff64]">&gt; &quot;There is no spoon. Only root cause analysis.&quot;</p>
+            <p>&gt; ROLE: IT Support Specialist</p>
+            <p>&gt; LOCATION: Menifee, CA</p>
+            <p className="text-[#63ff64]">&gt; Actively seeking IT Support Jobs</p>
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {statusReadouts.map((readout) => (
