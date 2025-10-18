@@ -38,6 +38,26 @@ describe("UI adjustments", () => {
     expect(markup).toContain("#00b33c")
   })
 
+  it("shows updated hero summary copy without inspirational quote", () => {
+    const markup = renderToStaticMarkup(<MatrixPortfolio />)
+
+    expect(markup).toContain("&gt; STATUS: <span class=\"text-[#63ff64]\">ONLINE</span>")
+    expect(markup).toContain("&gt; ROLE: IT Support Specialist</p>")
+    expect(markup).toContain("&gt; LOCATION: Menifee, CA</p>")
+    expect(markup).toContain("&gt; Actively seeking IT Support Jobs</p>")
+    expect(markup).not.toContain("There is no spoon. Only root cause analysis.")
+  })
+
+  it("keeps hero summary free of unicode arrows (property)", () => {
+    const markup = renderToStaticMarkup(<MatrixPortfolio />)
+    const heroLines = [...markup.matchAll(/&gt; ([^<]+)</g)].map(([, text]) => text)
+
+    expect(heroLines.length).toBeGreaterThan(0)
+    for (const line of heroLines) {
+      expect(line.includes("→")).toBe(false)
+    }
+  })
+
   it("renders navigation commands for every section including home", () => {
     const markup = renderToStaticMarkup(<MatrixPortfolio />)
     const linkTexts = [...markup.matchAll(/<a[^>]+href=\"#([^"]+)\"[^>]*>(.*?)<\/a>/g)].map(([, , content]) =>
